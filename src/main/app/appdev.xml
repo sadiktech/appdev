@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:h-base-phoenix="http://www.mulesoft.org/schema/mule/h-base-phoenix" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/h-base-phoenix http://www.mulesoft.org/schema/mule/h-base-phoenix/current/mule-h-base-phoenix.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8081" doc:name="HTTP Listener Configuration"/>
+    <h-base-phoenix:config name="HBasePhoenix__Configuration" url="jdbc:phoenix:crowley.sandbox.com:2181:/hbase-secure:hbase-sandbox@SANDBOX.COM:src/main/resources/hbase.headless.keytab" timeout="3000" doc:name="HBasePhoenix: Configuration" driverClass="org.apache.phoenix.jdbc.PhoenixDriver"/>
+    <flow name="appdevFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/getTest" allowedMethods="POST" doc:name="HTTP"/>
+        <h-base-phoenix:ddl config-ref="HBasePhoenix__Configuration" query="drop table if exists validationtable" doc:name="HBasePhoenix"/>
+        <logger message="after drop ----- #[payload]" level="INFO" doc:name="Logger"/>
+        <h-base-phoenix:ddl config-ref="HBasePhoenix__Configuration" query="create table validationtable (empId integer not null primary key, empname varchar)" doc:name="HBasePhoenix"/>
+        <logger message="after create table  ----- #[payload]" level="INFO" doc:name="Logger"/>
+        <h-base-phoenix:upsert config-ref="HBasePhoenix__Configuration" selectquery="upsert into validationtable values (202,'Ratnesh Rai')" doc:name="HBasePhoenix"/>
+        <logger message="After insert -------------#[payload]" level="INFO" doc:name="Logger"/>
+        <h-base-phoenix:select config-ref="HBasePhoenix__Configuration" selectquery="select EMPID from validationtable" doc:name="HBasePhoenix"/>
+        <logger message="log after first select  -----------------#[payload]" level="INFO" doc:name="Logger"/>
+        <h-base-phoenix:delete config-ref="HBasePhoenix__Configuration" query="delete from validationtable" doc:name="HBasePhoenix"/>
+        <logger message="Logs after delete -------------- &gt; #[payload]" level="INFO" doc:name="Logger"/>
+        <h-base-phoenix:select config-ref="HBasePhoenix__Configuration" selectquery="select * from validationtable" doc:name="HBasePhoenix"/>
+        <logger message="log after second select ------------ #[payload]" level="INFO" doc:name="Logger"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+    </flow>
+</mule>

@@ -1,0 +1,39 @@
+Client {
+  com.sun.security.auth.module.Krb5LoginModule required
+  useKeyTab=true
+  keyTab="/opt/mule/mule-CURRENT/apps/anypointjavaPhoenix-ch-kirk/classes/hbase.headless.keytab"
+  useTicketCache=false
+  principal="hbase-hadoopprod@CROWLEY.COM";
+};
+ClientCloudHub {
+  com.sun.security.auth.module.Krb5LoginModule required
+  useKeyTab=true
+  keyTab="/opt/mule/mule-CURRENT/apps/anypointjavaPhoenix-ch-kirk/classes/hbase.headless.keytab"
+  useTicketCache=false
+  principal="hbase-hadoopprod@CROWLEY.COM";
+};
+ClientLocal {
+  com.sun.security.auth.module.Krb5LoginModule required
+  useKeyTab=true
+  keyTab="src/main/resources/hbase.headless.keytab"
+  useTicketCache=false
+  principal="hbase-hadoopprod@CROWLEY.COM";
+};
+KafkaClient {
+   com.sun.security.auth.module.Krb5LoginModule required
+   useTicketCache=false
+   renewTicket=true
+   serviceName="kafka"
+   useKeyTab=true
+   keyTab="/opt/mule/mule-CURRENT/apps/anypointjava-kirk/classes/hbase.headless.keytab"
+   principal="hbase-hadoopprod@CROWLEY.COM";
+};
+RegistryClient {
+   com.sun.security.auth.module.Krb5LoginModule required
+   useTicketCache=false
+   renewTicket=true
+   serviceName="kafka"
+   useKeyTab=true
+   keyTab="/opt/mule/mule-CURRENT/apps/anypointjava-kirk/classes/hbase.headless.keytab"
+   principal="hbase-hadoopprod@CROWLEY.COM";
+};
